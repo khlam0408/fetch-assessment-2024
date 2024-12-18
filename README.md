@@ -1,6 +1,6 @@
 # Fetch Assessment: Receipt Processor
 
-This assessment is for the company Fetch. This assessment required me to create a webservice tha fulfils the specified documented API listed:
+This assessment is for the company Fetch. This assessment required me to create a webservice that fulfils the specified documented API listed:
 - POST: Submit a receipt to process and return the ID assigned to the receipt
 - GET: Return the points awarded for the specified receipt
 
@@ -14,13 +14,22 @@ The rules to calculate the points for each receipt is listed below:
 - 10 points if the time of purchase is after 2:00pm and before 4:00pm.
 
 
-## How to Run
+## How to Run with Docker
 
 To run this webservice, we need to deploy Docker. Run the command `docker-compose up`. Once this is called, the program should be running. 
 
+## How to Run without Docker
+
+With the project directory in the terminal, type in `go run main.go`. This would run the code on the main file. Once this is running you can start using the routes.
+
 ## Example Test Case to Input
 
-Input a test case for the POST route. For example:
+To start, you would need a program that can send request. I used Postman to send them. 
+To send the request you would add a request, and label it as a POST route. Make sure that in the headers the `Content-Type` is of application/json. 
+Then, for the route itself, you would use `localhost:8080/receipts/process`
+As for the body, you can refer to the test case below:
+
+Input example test case:
 ```json
 {
     "retailer": "Costco",
@@ -41,8 +50,7 @@ Input a test case for the POST route. For example:
     ]
 }
 ```
-
-After the input the response should return an ID in this JSON format:
+After sending the input, the response should return an ID in this JSON format:
 ```json
 {
     "id": "8f1ab475-1139-40be-a044-85ed1f3fc421"
@@ -51,15 +59,12 @@ After the input the response should return an ID in this JSON format:
 
 This would not be the exact ID, but it will be of a similar structure.
 
-You would take this ID and place it into the GET route for the points: `receipts/8f1ab475-1139-40be-a044-85ed1f3fc421/points`
-And it would return a JSON object like this:
+You would take this ID and place it into new GET route for the points. To do so, you add another request and label it as a GET route. 
+Then you would input the route as so: `receipts/8f1ab475-1139-40be-a044-85ed1f3fc421/points`
+
+After sending the GET request, you should get a response like this:
 ```json
 {
     "points": 27
 }
 ```
-
-
-
-
-
