@@ -1,6 +1,6 @@
 # Fetch Assessment: Receipt Processor
 
-This assessment is for the company Fetch. This assessment required me to create a webservice tha fulfils the specified documented API listed:
+This assessment is for the company Fetch. This assessment required me to create a webservice that fulfils the specified documented API listed:
 - POST: Submit a receipt to process and return the ID assigned to the receipt
 - GET: Return the points awarded for the specified receipt
 
