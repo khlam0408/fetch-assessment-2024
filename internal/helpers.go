@@ -9,6 +9,8 @@ import (
 
 func CalculatePoints(points int, currReceipt models.Receipt) int{
 
+	// This calculates all the rules for the points. 
+
 	totalPoints := retailerPoints(points, currReceipt) 
 	totalPoints += purchaseDateOdd(points, currReceipt)
 	totalPoints += timePurchaseBefore(points, currReceipt)
@@ -20,8 +22,9 @@ func CalculatePoints(points int, currReceipt models.Receipt) int{
 	return totalPoints
 }
 func retailerPoints(points int, currReceipt models.Receipt) int{
-	// Find retailer name points 
-	// ASCII Nums: 65 - 90 and 97 - 122
+	// Find retailer name points. Only the alphabetical characters, no numbers or symbols
+
+	// ASCII Nums: 65 - 90 and 97 - 122 
 	for i := 0; i <len(currReceipt.Retailer); i++{
 		if int(currReceipt.Retailer[i]) >= 65 && int(currReceipt.Retailer[i]) <= 90{
 			points++
@@ -33,10 +36,11 @@ func retailerPoints(points int, currReceipt models.Receipt) int{
 	return points
 }
 
-func purchaseDateOdd (points int, currReceipt models.Receipt) int{
+func purchaseDateOdd(points int, currReceipt models.Receipt) int{
 		// Find if purchase date is odd (so the day not the month)
+
 		start := len(currReceipt.PurchaseDate)-2
-		dayAsStr := string(currReceipt.PurchaseDate[start:])
+		dayAsStr := string(currReceipt.PurchaseDate[start:]) // This only gets the day 
 	
 		dayAsInt, err := strconv.Atoi(dayAsStr)
 		if err != nil{
@@ -50,7 +54,7 @@ func purchaseDateOdd (points int, currReceipt models.Receipt) int{
 
 func timePurchaseBefore(points int, currReceipt models.Receipt) int{
 	// Find of time of purchase is between 2:00pm and 4:00pm
-	timePurchased := string(currReceipt.PurchaseTime[:2])
+	timePurchased := string(currReceipt.PurchaseTime[:2]) // This gets the hour 
 	timeAsInt, err := strconv.Atoi(timePurchased)
 	if err != nil{
 		return 0
@@ -62,9 +66,9 @@ func timePurchaseBefore(points int, currReceipt models.Receipt) int{
 }
 
 func totalRound(points int, currReceipt models.Receipt) int{
-	// Find if total is a rounded number already
+	// Find if the total is a rounded number already (so no cents)
 	start := len(currReceipt.Total) - 2
-	cents := string(currReceipt.Total[start:])
+	cents := string(currReceipt.Total[start:]) // This gets the cents
 	centsAsInt, err := strconv.Atoi(cents)
 	if err != nil{
 		return 0
@@ -76,8 +80,8 @@ func totalRound(points int, currReceipt models.Receipt) int{
 }
 
 func totalMultiple(points int, currReceipt models.Receipt) int{
-	// Find if total is multiple of 0.25
-	totalPurchased, err := strconv.ParseFloat(currReceipt.Total, 8)
+	// Find if the total is multiple of 0.25
+	totalPurchased, err := strconv.ParseFloat(currReceipt.Total, 8) // Converts the total to a float
 	if err != nil{
 		return 0
 	}
@@ -88,16 +92,17 @@ func totalMultiple(points int, currReceipt models.Receipt) int{
 }
 
 func itemMultiplePrice(points int, currReceipt models.Receipt) int{
+	// If the length of the items description is a multiple of 3, multiply its price by 0.2 and round to the nearest integer
 	for i := 0; i<len(currReceipt.Items); i++{
 		currItem := currReceipt.Items[i]
-		result := strings.TrimSpace(currItem["shortDescription"])
+		result := strings.TrimSpace(currItem["shortDescription"]) // trims off any leading or trailing spaces
 		lenOfItem := len(result)
 		if lenOfItem % 3 == 0{
 			priceAsFloat, err := strconv.ParseFloat(currItem["price"], 8)
 			if err != nil{
 				return 0
 			}
-			total := math.Ceil(priceAsFloat * 0.2)
+			total := math.Ceil(priceAsFloat * 0.2) // Rounds it up, even if there is just 0.01
 			points += int(total)
 		}
 
@@ -106,6 +111,7 @@ func itemMultiplePrice(points int, currReceipt models.Receipt) int{
 }
 
 func pairItems(points int, currReceipt models.Receipt) int{
+	// For every two items, add 5 points. So if there is an odd amount of items, only count the items that have a pair. If no pair, it does not count
 	numOfItems := len(currReceipt.Items)
 	points += 5 * (numOfItems / 2)
 	return points
